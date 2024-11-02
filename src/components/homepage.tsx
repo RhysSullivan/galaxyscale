@@ -1,10 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Globe, Menu } from "lucide-react";
+import { Globe } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-export const runtime = "edge";
 
 export function Homepage() {
   async function signIn() {

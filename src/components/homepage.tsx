@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Globe, Menu } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-
+export const runtime = "edge";
 export function Homepage(props: { signedIn: boolean }) {
   async function signIn() {
     "use server";

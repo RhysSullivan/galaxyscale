@@ -9,7 +9,6 @@ export function Homepage() {
     const jar = await cookies();
     jar.set("isLoggedIn", "true");
     jar.set("session", "1234");
-    redirect("/");
   }
 
   async function signOut() {
@@ -17,7 +16,6 @@ export function Homepage() {
     const jar = await cookies();
     jar.delete("session");
     jar.delete("isLoggedIn");
-    redirect("/");
   }
 
   return (
@@ -44,16 +42,21 @@ export function Homepage() {
 
                 // For some reason the ui doesn't update after clicking sign in, this fixes that
                 function checkAndUpdateUI() {
-                  if (document.cookie.includes("isLoggedIn=true")) {
-                    const signInButton = document.getElementById("sign-in");
-                    if (signInButton) {
-                      signInButton.textContent = "Dashboard";
-                    }
-                    const signOutButton = document.getElementById("sign-out");
-                    if (signOutButton) {
-                      signOutButton.classList.remove("hidden");
-                    }
+                console.log(document.cookie)
+                const loggedIn = document.cookie.includes("isLoggedIn=true")
+                const signInButton = document.getElementById("sign-in");
+                if (signInButton) {
+                  signInButton.textContent = loggedIn ? "Dashboard" : 'Sign In';
+                }
+                const signOutButton = document.getElementById("sign-out");
+                if (signOutButton) {
+                  if(loggedIn){
+                    signOutButton.classList.remove("hidden");
+                    console.log("showing sign in")
+                  } else {
+                    signOutButton.classList.add('hidden')
                   }
+                 }
                 }
           `,
               }}
@@ -68,12 +71,7 @@ export function Homepage() {
                 Sign in
               </button>
             </form>
-            <form
-              className="hidden"
-              suppressHydrationWarning
-              id="sign-out"
-              action={signOut}
-            >
+            <form suppressHydrationWarning id="sign-out" action={signOut}>
               <button
                 type={"submit"}
                 className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"

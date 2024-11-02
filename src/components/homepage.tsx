@@ -4,7 +4,9 @@ import { Globe, Menu } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export function Homepage(props: { signedIn: boolean }) {
+export async function Homepage() {
+  const jarr = await cookies();
+  const signedIn = jarr.has("session");
   async function signIn() {
     "use server";
     const jar = await cookies();
@@ -33,10 +35,10 @@ export function Homepage(props: { signedIn: boolean }) {
                 type={"submit"}
                 className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
               >
-                {props.signedIn ? "Dashboard" : "Sign in"}
+                {signedIn ? "Dashboard" : "Sign in"}
               </button>
             </form>
-            {props.signedIn && (
+            {signedIn && (
               <form className="block" action={signOut}>
                 <button
                   type={"submit"}

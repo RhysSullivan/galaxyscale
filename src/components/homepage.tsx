@@ -4,21 +4,45 @@ import { Globe, Menu } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 export const runtime = "edge";
-export function Homepage(props: { signedIn: boolean }) {
+
+export function Homepage() {
   async function signIn() {
     "use server";
     const jar = await cookies();
     jar.set("session", "1234");
+    jar.set("isLoggedIn", "true");
     redirect("/");
   }
+
   async function signOut() {
     "use server";
     const jar = await cookies();
     jar.delete("session");
+    jar.delete("isLoggedIn");
     redirect("/");
   }
+
   return (
     <div className="min-h-screen bg-black text-gray-200 font-mono">
+      {/* Inline script to change button text based on isLoggedIn cookie */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            document.addEventListener("DOMContentLoaded", function () {
+              if (document.cookie.includes("isLoggedIn=true")) {
+                const signInButton = document.getElementById("sign-in");
+                if (signInButton) {
+                  signInButton.textContent = "Dashboard";
+                }
+                  const signOutButton = document.getElementById("sign-out");
+                if (signOutButton) {
+                  signOutButton.classList.remove("hidden");
+                }
+              }
+            });
+          `,
+        }}
+      />
       <header className="border-b border-gray-800">
         <nav className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <div className="flex hidden sm:block items-center">
@@ -30,22 +54,27 @@ export function Homepage(props: { signedIn: boolean }) {
           <div className="flex items-center space-x-4">
             <form className="block" action={signIn}>
               <button
-                type={"submit"}
+                type="submit"
+                suppressHydrationWarning
+                id="sign-in"
                 className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
               >
-                {props.signedIn ? "Dashboard" : "Sign in"}
+                Sign in
               </button>
             </form>
-            {props.signedIn && (
-              <form className="block" action={signOut}>
-                <button
-                  type={"submit"}
-                  className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
-                >
-                  Sign out
-                </button>
-              </form>
-            )}
+            <form
+              className="block hidden"
+              suppressHydrationWarning
+              id="sign-out"
+              action={signOut}
+            >
+              <button
+                type={"submit"}
+                className="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                Sign out
+              </button>
+            </form>
           </div>
         </nav>
       </header>

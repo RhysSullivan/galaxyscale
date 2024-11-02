@@ -9,7 +9,7 @@ export function Homepage(props: { signedIn: boolean }) {
     "use server";
     const jar = await cookies();
     jar.set("session", "1234");
-    redirect("/dynamic");
+    redirect("/");
   }
   async function signOut() {
     "use server";

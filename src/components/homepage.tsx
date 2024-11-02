@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import { Globe, Menu } from "lucide-react";
+import { Globe } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 

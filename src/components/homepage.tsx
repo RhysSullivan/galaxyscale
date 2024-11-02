@@ -42,7 +42,7 @@ export function Homepage() {
                   }, 100);
                 });
 
-                // Function to check and update the UI based on cookies
+                // For some reason the ui doesn't update after clicking sign in, this fixes that
                 function checkAndUpdateUI() {
                   if (document.cookie.includes("isLoggedIn=true")) {
                     const signInButton = document.getElementById("sign-in");

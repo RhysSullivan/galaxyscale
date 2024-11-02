@@ -3,14 +3,15 @@ import Image from "next/image";
 import { Globe, Menu } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 export const runtime = "edge";
 
 export function Homepage() {
   async function signIn() {
     "use server";
     const jar = await cookies();
-    jar.set("session", "1234");
     jar.set("isLoggedIn", "true");
+    jar.set("session", "1234");
     redirect("/");
   }
 
@@ -24,34 +25,42 @@ export function Homepage() {
 
   return (
     <div className="min-h-screen bg-black text-gray-200 font-mono">
-      {/* Inline script to change button text based on isLoggedIn cookie */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            document.addEventListener("DOMContentLoaded", function () {
-              if (document.cookie.includes("isLoggedIn=true")) {
-                const signInButton = document.getElementById("sign-in");
-                if (signInButton) {
-                  signInButton.textContent = "Dashboard";
-                }
-                  const signOutButton = document.getElementById("sign-out");
-                if (signOutButton) {
-                  signOutButton.classList.remove("hidden");
-                }
-              }
-            });
-          `,
-        }}
-      />
       <header className="border-b border-gray-800">
         <nav className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
-          <div className="flex hidden sm:block items-center">
+          <div className="hidden sm:block items-center">
             <Link href="/" className="flex items-center space-x-2">
               <Globe className="h-6 w-6 text-white" />
               <span className="font-bold">GalaxyScale</span>
             </Link>
           </div>
           <div className="flex items-center space-x-4">
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  document.addEventListener("DOMContentLoaded", function () {
+                  checkAndUpdateUI();
+                  setInterval(function () {
+                  
+                      checkAndUpdateUI();
+                  }, 100);
+                });
+
+                // Function to check and update the UI based on cookies
+                function checkAndUpdateUI() {
+                  if (document.cookie.includes("isLoggedIn=true")) {
+                    const signInButton = document.getElementById("sign-in");
+                    if (signInButton) {
+                      signInButton.textContent = "Dashboard";
+                    }
+                    const signOutButton = document.getElementById("sign-out");
+                    if (signOutButton) {
+                      signOutButton.classList.remove("hidden");
+                    }
+                  }
+                }
+          `,
+              }}
+            />
             <form className="block" action={signIn}>
               <button
                 type="submit"
@@ -63,7 +72,7 @@ export function Homepage() {
               </button>
             </form>
             <form
-              className="block hidden"
+              className="hidden"
               suppressHydrationWarning
               id="sign-out"
               action={signOut}
